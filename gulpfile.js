@@ -89,6 +89,6 @@ exports.build = gulp.task('update',
     gulp.task('npm-project-layer'),
     gulp.task('zip-project'),
     gulp.task('zip-layer-project'),
-    gulp.parallel('lambdas'),
-    gulp.task('lambda-layer')
+    gulp.task('lambda-layer'),
+    gulp.parallel('lambdas')
   ))
