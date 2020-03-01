@@ -4,6 +4,7 @@ const del = require('del')
 const install = require('gulp-install')
 const shell = require('gulp-shell')
 const minimist = require('minimist')
+const execSync = require('child_process').execSync
 
 /**
  * Example:
@@ -25,6 +26,8 @@ const zipLayerFilename = 'dist-layer.zip'
 
 const distDirectory = './dist'
 const nodeDir = './node'
+
+var lambdaLayerJSON = {}
 
 gulp.task('clean-project-layer', function () {
   return del(distDirectory + '/' + projectName + '/*')
@@ -64,7 +67,8 @@ arrFunctions.forEach(function (lambda) {
   console.log('lambda: ' + lambda)
   gulp.task('update_' + lambda, gulp.series(
     shell.task([
-      'aws lambda update-function-code --function-name ' + lambda + ' --zip-file fileb://' + projectName + '/' + zipFileName + ' --publish'
+      'aws lambda update-function-code --function-name ' + lambda + ' --zip-file fileb://' + projectName + '/' + zipFileName + ' --publish',
+      'aws lambda update-function-configuration --function-name ' + lambda + ' --layers ' + lambdaLayerJSON.LayerVersionArn
     ])
   ))
 })
@@ -76,9 +80,7 @@ gulp.task('lambdas',
 )
 
 gulp.task('lambda-layer', gulp.series(
-  shell.task([
-    'aws lambda publish-layer-version --layer-name ' + lambdaLayer + ' --zip-file fileb://' + projectName + '/' + zipLayerFilename
-  ])
+  lambdaLayerJSON = execSync('aws lambda publish-layer-version --layer-name ' + lambdaLayer + ' --zip-file fileb://' + projectName + '/' + zipLayerFilename).toString()
 ))
 
 exports.build = gulp.task('update',
