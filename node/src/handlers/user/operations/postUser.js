@@ -23,7 +23,7 @@ async function handler (event, context) {
 
   if (results) {
     return new SuccessResponse({
-      message: 'Message send, message id: ' + results
+      message: 'SNS Message send, with message id: ' + results
     })
   }
 
