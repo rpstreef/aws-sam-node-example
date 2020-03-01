@@ -5,7 +5,7 @@ const { SuccessResponse, ErrorResponse } = require('../../../lib/response')
 async function handler (params, operation) {
   if (params.userID) {
     return new SuccessResponse({
-      message: 'User ' + params.userID + ' found!'
+      message: 'User ' + params.userID + ' found! This is an update'
     })
   }
 
