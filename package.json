@@ -1,0 +1,35 @@
+{
+  "name": "tf-cicid-lambda",
+  "version": "1.0.0",
+  "description": "CICI script to deploy Lambda and Lambda Layer code updates",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rpstreef/tf-cicid-lambda.git"
+  },
+  "keywords": [
+    "terraform",
+    "lambda",
+    "lambda-layer",
+    "aws"
+  ],
+  "author": "Rolf Streefkerk",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/rpstreef/tf-cicid-lambda/issues"
+  },
+  "homepage": "https://github.com/rpstreef/tf-cicid-lambda#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "del": "^4.1.0",
+    "gulp": "^4.0.0",
+    "gulp-if": "^2.0.2",
+    "gulp-install": "^1.1.0",
+    "gulp-shell": "^0.7.0",
+    "gulp-zip": "^4.2.0",
+    "minimist": "^1.2.0"
+  }
+}
