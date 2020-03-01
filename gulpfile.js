@@ -2,9 +2,8 @@ const gulp = require('gulp')
 const zip = require('gulp-zip')
 const del = require('del')
 const install = require('gulp-install')
-const shell = require('gulp-shell')
 const minimist = require('minimist')
-const execSync = require('child_process').execSync
+const shellJS = require('shelljs')
 
 /**
  * Example:
@@ -64,12 +63,15 @@ gulp.task('zip-layer-project', function () {
 })
 
 arrFunctions.forEach(function (lambda) {
-  console.log('lambda: ' + lambda)
   gulp.task('update_' + lambda, gulp.series(
-    shell.task([
-      'aws lambda update-function-code --function-name ' + lambda + ' --zip-file fileb://' + projectName + '/' + zipFileName + ' --publish',
-      'aws lambda update-function-configuration --function-name ' + lambda + ' --layers ' + lambdaLayerJSON.LayerVersionArn
-    ])
+    function updateCode (done) {
+      shellJS.exec('aws lambda update-function-code --function-name ' + lambda + ' --zip-file fileb://' + projectName + '/' + zipFileName)
+      done()
+    },
+    function updateConfig (done) {
+      shellJS.exec('aws lambda update-function-configuration --function-name ' + lambda + ' --layers ' + lambdaLayerJSON.LayerVersionArn)
+      done()
+    }
   ))
 })
 
@@ -79,9 +81,11 @@ gulp.task('lambdas',
   )
 )
 
-gulp.task('lambda-layer', gulp.series(
-  lambdaLayerJSON = execSync('aws lambda publish-layer-version --layer-name ' + lambdaLayer + ' --zip-file fileb://' + projectName + '/' + zipLayerFilename).toString()
-))
+gulp.task('taskLambdaLayer', function (done) {
+  const output = shellJS.exec('aws lambda publish-layer-version --layer-name ' + lambdaLayer + ' --zip-file fileb://' + projectName + '/' + zipLayerFilename)
+  lambdaLayerJSON = JSON.parse(output)
+  done()
+})
 
 exports.build = gulp.task('update',
   gulp.series(
@@ -91,6 +95,6 @@ exports.build = gulp.task('update',
     gulp.task('npm-project-layer'),
     gulp.task('zip-project'),
     gulp.task('zip-layer-project'),
-    gulp.task('lambda-layer'),
+    gulp.task('taskLambdaLayer'),
     gulp.parallel('lambdas')
   ))
