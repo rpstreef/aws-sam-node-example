@@ -1,6 +1,7 @@
 
 const middy = require('middy')
 const { httpErrorHandler, httpSecurityHeaders } = require('middy/middlewares')
+
 const { ErrorResponse } = require('../../lib/response')
 const standards = require('../../lib/standards')
 

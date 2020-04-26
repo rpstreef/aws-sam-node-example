@@ -1,8 +1,8 @@
 
 const middy = require('middy')
 const { httpErrorHandler, httpSecurityHeaders } = require('middy/middlewares')
-const { SuccessResponse } = require('../../lib/response')
 
+const { SuccessResponse } = require('../../lib/response')
 const Logger = require('../../lib/logger')
 const CorrelationId = require('../../lib/correlationId')
 

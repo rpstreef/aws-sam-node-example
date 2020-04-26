@@ -1,6 +1,6 @@
 'use strict'
 
-const { SuccessResponse } = require('../../../lib/response')
+const { SuccessResponse } = require('../../lib/response')
 
 async function handler (params, operation) {
   return new SuccessResponse({

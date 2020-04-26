@@ -49,8 +49,8 @@ Resources:
   IdentityFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: handlers/identity/
-      Handler: index.lambdaHandler
+      CodeUri: src/
+      Handler: identity/app.lambdaHandler
       Role: ""
       Events:
         identityAuthenticate:
@@ -81,8 +81,8 @@ Resources:
   UserFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: handlers/user/
-      Handler: index.lambdaHandler
+      CodeUri: src/
+      Handler: user/app.lambdaHandler
       Role: ""
       Events:
         getUser:
@@ -101,8 +101,8 @@ Resources:
   UserReceiverFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: handlers/user_receiver/
-      Handler: index.lambdaHandler
+      CodeUri: src/
+      Handler: user_receiver/app.lambdaHandler
       Role: ""
 
   LambdaLayer:
@@ -110,7 +110,7 @@ Resources:
     Properties:
       LayerName: !Sub "${Environment}-${AppName}-layer"
       Description: !Sub "Lambda layer for ${Environment}-${AppName}-layer application"
-      ContentUri: "layer/"
+      ContentUri: "dependencies/"
       CompatibleRuntimes:
         - nodejs12.x
       RetentionPolicy: Retain

@@ -2,8 +2,9 @@
 
 const middy = require('middy')
 const { httpErrorHandler, httpSecurityHeaders } = require('middy/middlewares')
-const { ErrorResponse } = require('../../lib/response')
-const standards = require('../../lib/standards')
+
+const { ErrorResponse } = require('../lib/response')
+const standards = require('../lib/standards')
 
 const identityAuthenticate = require('./operations/identityAuthenticate')
 const identityRegister = require('./operations/identityRegister')
