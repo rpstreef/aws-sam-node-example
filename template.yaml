@@ -1,9 +1,9 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: >
-  Example Node AWS SAM application
-  Integrates with Terraform deployed infrastructure
+Description: 'Example Node AWS SAM application Integrates with Terraform deployed
+  infrastructure
 
+  '
 Parameters:
   AppName:
     Type: String
@@ -16,118 +16,135 @@ Parameters:
   UserPoolARN:
     Type: String
 
-
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
     Runtime: nodejs12.x
     Timeout: 4
     ReservedConcurrentExecutions: 10
     Tags:
-      Environment: !Ref Environment
-      Name: !Ref AppName
+      Environment:
+        Ref: Environment
+      Name:
+        Ref: AppName
     Tracing: Active
     Layers:
-      - !Ref LambdaLayer
+    - Ref: LambdaLayer
 
 Resources:
   Api:
     Type: AWS::Serverless::Api
     Properties:
-      EndpointConfiguration: "EDGE"
+      EndpointConfiguration: EDGE
       StageName: Dev
       TracingEnabled: true
       DefinitionBody:
-        'Fn::Transform':
-          Name: 'AWS::Include'
+        Fn::Transform:
+          Name: AWS::Include
           Parameters:
-            Location: 'api.yaml'
+            Location: api.yaml
       Tags:
-        Environment: !Ref Environment
-        Name: !Ref AppName
+        Environment:
+          Ref: Environment
+        Name:
+          Ref: AppName
 
   IdentityFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/
+      CodeUri: IdentityFunction
       Handler: identity/app.lambdaHandler
-      Role: ""
+      Role: ''
       Events:
         identityAuthenticate:
           Type: Api
           Properties:
             Path: /identity/authenticate
             Method: post
-            RestApiId: !Ref Api
+            RestApiId:
+              Ref: Api
         identityRegister:
           Type: Api
           Properties:
             Path: /identity/register
             Method: post
-            RestApiId: !Ref Api
+            RestApiId:
+              Ref: Api
         identityReset:
           Type: Api
           Properties:
             Path: /identity/reset
             Method: post
-            RestApiId: !Ref Api
+            RestApiId:
+              Ref: Api
         identityVerify:
           Type: Api
           Properties:
             Path: /identity/verify
             Method: post
-            RestApiId: !Ref Api
-            
+            RestApiId:
+              Ref: Api
+
   UserFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/
+      CodeUri: UserFunction
       Handler: user/app.lambdaHandler
-      Role: ""
+      Role: ''
       Events:
         getUser:
           Type: Api
           Properties:
             Path: /user
             Method: get
-            RestApiId: !Ref Api
+            RestApiId:
+              Ref: Api
         postUser:
           Type: Api
           Properties:
             Path: /user
             Method: post
-            RestApiId: !Ref Api
+            RestApiId:
+              Ref: Api
 
   UserReceiverFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/
+      CodeUri: UserReceiverFunction
       Handler: user_receiver/app.lambdaHandler
-      Role: ""
+      Role: ''
 
   LambdaLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
-      LayerName: !Sub "${Environment}-${AppName}-layer"
-      Description: !Sub "Lambda layer for ${Environment}-${AppName}-layer application"
-      ContentUri: "dependencies/"
+      LayerName:
+        Fn::Sub: ${Environment}-${AppName}-layer
+      Description:
+        Fn::Sub: Lambda layer for ${Environment}-${AppName}-layer application
+      ContentUri: ..\..\dependencies
       CompatibleRuntimes:
-        - nodejs12.x
+      - nodejs12.x
       RetentionPolicy: Retain
 
 Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   Api:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${Api}.execute-api.${AWS::Region}.amazonaws.com/dev/"
+    Description: API Gateway endpoint URL for Prod stage for Hello World function
+    Value:
+      Fn::Sub: https://${Api}.execute-api.${AWS::Region}.amazonaws.com/dev/
   IdentityFunction:
-    Description: "Identity Lambda Function ARN"
-    Value: !GetAtt IdentityFunction.Arn
+    Description: Identity Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - IdentityFunction
+      - Arn
   UserFunction:
-    Description: "User Lambda Function ARN"
-    Value: !GetAtt UserFunction.Arn
+    Description: User Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - UserFunction
+      - Arn
   UserReceiverFunction:
-    Description: "User receiver Lambda Function ARN"
-    Value: !GetAtt UserReceiverFunction.Arn
+    Description: User receiver Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - UserReceiverFunction
+      - Arn
