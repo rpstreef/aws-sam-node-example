@@ -34,6 +34,14 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Authenticate'
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${IdentityFunction.Arn}/invocations
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        timeoutInMillis:
+          Ref: APITimeout
+        type: "aws_proxy"
       responses:
         200:
           $ref: '#/components/responses/lambda'
@@ -76,6 +84,14 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Register'
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${IdentityFunction.Arn}/invocations
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        timeoutInMillis:
+          Ref: APITimeout
+        type: "aws_proxy"
       responses:
         200:
           $ref: '#/components/responses/lambda'
@@ -118,6 +134,14 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Reset'
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${IdentityFunction.Arn}/invocations
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        timeoutInMillis:
+          Ref: APITimeout
+        type: "aws_proxy"
       responses:
         200:
           $ref: '#/components/responses/lambda'
@@ -160,6 +184,14 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Verify'
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${IdentityFunction.Arn}/invocations
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        timeoutInMillis:
+          Ref: APITimeout
+        type: "aws_proxy"
       responses:
         200:
           $ref: '#/components/responses/lambda'
@@ -200,6 +232,14 @@ paths:
         - $ref: '#/components/parameters/userID'
       security:
       - example-CognitoUserPoolAuthorizer: []
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UserFunction.Arn}/invocations
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        timeoutInMillis:
+          Ref: APITimeout
+        type: "aws_proxy"
       responses:
         200:
           $ref: '#/components/responses/user'
@@ -220,6 +260,14 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/User'
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UserFunction.Arn}/invocations
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        timeoutInMillis:
+          Ref: APITimeout
+        type: "aws_proxy"
       responses:
         200:
           $ref: '#/components/responses/lambda'

@@ -29,6 +29,10 @@ Parameters:
     Type: String
   SNSTopicARN:
     Type: String
+  APITimeout:
+    Type: Number
+    Description: Sets the timeout in millis for all API endpoints
+    Default: 4000
 
 Globals:
   Function:
@@ -53,13 +57,13 @@ Resources:
       StageName: Dev
       TracingEnabled: true
       MethodSettings:
-        - ResourcePath: /
+        - HttpMethod: "*"
+          ResourcePath: "/*"
           DataTraceEnabled: True
-          HttpMethod: "*"
           LoggingLevel: ERROR
           MetricsEnabled: True
-          ThrottlingBurstLimit: 10
-          ThrottlingRateLimit: 5
+          ThrottlingBurstLimit: 1000
+          ThrottlingRateLimit: 2000
       DefinitionBody:
         Fn::Transform:
           Name: AWS::Include
