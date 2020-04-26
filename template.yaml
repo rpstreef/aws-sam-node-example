@@ -74,7 +74,7 @@ Resources:
   IdentityFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: IdentityFunction
+      CodeUri: src/
       Handler: identity/app.lambdaHandler
       Role:
         Ref: IdentityRoleARN
@@ -119,7 +119,7 @@ Resources:
   UserFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: UserFunction
+      CodeUri: src/
       Handler: user/app.lambdaHandler
       Role:
         Ref: UserRoleARN
@@ -146,7 +146,7 @@ Resources:
   UserReceiverFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: UserReceiverFunction
+      CodeUri: src/
       Handler: user_receiver/app.lambdaHandler
       Role:
         Ref: UserReceiverRoleARN
@@ -168,7 +168,7 @@ Resources:
         Fn::Sub: ${Environment}-${AppName}-layer
       Description:
         Fn::Sub: Lambda layer for ${Environment}-${AppName}-layer application
-      ContentUri: ..\..\dependencies
+      ContentUri: dependencies
       CompatibleRuntimes:
       - nodejs12.x
       RetentionPolicy: Retain
