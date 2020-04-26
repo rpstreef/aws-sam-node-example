@@ -493,7 +493,7 @@ components:
       x-amazon-apigateway-authtype: "cognito_user_pools"
       x-amazon-apigateway-authorizer:
         providerARNs:
-        - Ref: UserPoolARN
+        - Ref: CognitoUserPoolARN
         type: "cognito_user_pools"
 tags:
   - name: Identity
