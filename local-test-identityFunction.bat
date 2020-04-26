@@ -1,1 +1,0 @@
-sam local invoke IdentityFunction -e ./events/event.json -d 5858

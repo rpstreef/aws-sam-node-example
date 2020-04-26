@@ -4,7 +4,9 @@
   "description": "CICI script to deploy Lambda and Lambda Layer code updates",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "identityFunction": "sam local invoke IdentityFunction -e ./events/event.json -d 5858",
+    "deploy": "sam deploy --profile multithreadlabs-dev"
   },
   "repository": {
     "type": "git",
