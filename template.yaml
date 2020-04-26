@@ -1,9 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: 'Example Node AWS SAM application Integrates with Terraform deployed
-  infrastructure
+Description: Example Node AWS SAM application Integrates with Terraform deployed infrastructure
 
-  '
 Parameters:
   AppName:
     Type: String
@@ -13,7 +11,23 @@ Parameters:
     Type: String
     Description: Name of application (no spaces). Value must be globally unique
     Default: dev
-  UserPoolARN:
+  IdentityRoleARN:
+    Type: String
+    Description: Identity lambda Role ARN
+  UserRoleARN:
+    Type: String
+    Description: User lambda Role ARN
+  UserReceiverRoleARN:
+    Type: String
+  DebugSampleRate: # debug_sample_rate = 0.05
+    Type: Number
+  CognitoUserPoolARN:
+    Type: String
+  CognitoUserPoolClientID:
+    Type: String
+  CognitoUserPoolID:
+    Type: String
+  SNSTopicARN:
     Type: String
 
 Globals:
@@ -21,6 +35,7 @@ Globals:
     Runtime: nodejs12.x
     Timeout: 4
     ReservedConcurrentExecutions: 10
+    MemorySize: 256
     Tags:
       Environment:
         Ref: Environment
@@ -37,6 +52,14 @@ Resources:
       EndpointConfiguration: EDGE
       StageName: Dev
       TracingEnabled: true
+      MethodSettings:
+        - ResourcePath: /
+          DataTraceEnabled: True
+          HttpMethod: "*"
+          LoggingLevel: ERROR
+          MetricsEnabled: True
+          ThrottlingBurstLimit: 10
+          ThrottlingRateLimit: 5
       DefinitionBody:
         Fn::Transform:
           Name: AWS::Include
@@ -53,7 +76,16 @@ Resources:
     Properties:
       CodeUri: IdentityFunction
       Handler: identity/app.lambdaHandler
-      Role: ''
+      Role:
+        Ref: IdentityRoleARN
+      Environment:
+        Variables:
+          COGNITO_USER_POOL_CLIENT_ID:
+            Ref: CognitoUserPoolClientID
+          COGNITO_USER_POOL_ID:
+            Ref: CognitoUserPoolID
+          DEBUG_SAMPLE_RATE:
+            Ref: DebugSampleRate
       Events:
         identityAuthenticate:
           Type: Api
@@ -89,7 +121,12 @@ Resources:
     Properties:
       CodeUri: UserFunction
       Handler: user/app.lambdaHandler
-      Role: ''
+      Role:
+        Ref: UserRoleARN
+      Environment:
+        Variables:
+          DEBUG_SAMPLE_RATE:
+            Ref: DebugSampleRate
       Events:
         getUser:
           Type: Api
@@ -111,7 +148,18 @@ Resources:
     Properties:
       CodeUri: UserReceiverFunction
       Handler: user_receiver/app.lambdaHandler
-      Role: ''
+      Role:
+        Ref: UserReceiverRoleARN
+      Environment:
+        Variables:
+          DEBUG_SAMPLE_RATE:
+            Ref: DebugSampleRate
+      Events:
+        SNS:
+          Type: SNS
+          Properties:
+            Topic: 
+              Ref: SNSTopicARN
 
   LambdaLayer:
     Type: AWS::Serverless::LayerVersion
