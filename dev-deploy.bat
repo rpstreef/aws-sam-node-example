@@ -1,0 +1,1 @@
+sam deploy --profile multithreadlabs-dev

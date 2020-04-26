@@ -1,0 +1,8 @@
+{
+    "javascript.validate.enable": false,
+    "standard.enable": true,
+    "standard.autoFixOnSave": true,
+    "serverlessIDE.validate": true,
+    "serverlessIDE.hover": true,
+    "serverlessIDE.completion": true
+}

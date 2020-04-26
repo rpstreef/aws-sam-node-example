@@ -7,7 +7,7 @@ const standards = require('../../lib/standards')
 const getUser = require('./operations/getUser')
 const postUser = require('./operations/postUser')
 
-const handler = middy(async (event, context) => {
+const lambdaHandler = middy(async (event, context) => {
   const operation = standards.getOperationName(event)
 
   switch (operation) {
@@ -26,4 +26,4 @@ const handler = middy(async (event, context) => {
   }
 }).use(httpErrorHandler()).use(httpSecurityHeaders())
 
-module.exports = { handler }
+module.exports = { lambdaHandler }

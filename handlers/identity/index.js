@@ -10,7 +10,7 @@ const identityRegister = require('./operations/identityRegister')
 const identityReset = require('./operations/identityReset')
 const identityVerify = require('./operations/identityVerify')
 
-const handler = middy(async (event, context) => {
+const lambdaHandler = middy(async (event, context) => {
   const params = standards.getParams(event)
   const operation = standards.getOperationName(event)
 
@@ -39,4 +39,4 @@ const handler = middy(async (event, context) => {
   }
 }).use(httpErrorHandler()).use(httpSecurityHeaders())
 
-module.exports = { handler }
+module.exports = { lambdaHandler }
