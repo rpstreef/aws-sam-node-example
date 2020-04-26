@@ -35,6 +35,8 @@ Parameters:
     Default: 4000
 
 Globals:
+  Api:
+    OpenApiVersion: 3.0.1
   Function:
     Runtime: nodejs12.x
     Timeout: 4
@@ -62,8 +64,8 @@ Resources:
           DataTraceEnabled: True
           LoggingLevel: ERROR
           MetricsEnabled: True
-          ThrottlingBurstLimit: 1000
-          ThrottlingRateLimit: 2000
+          ThrottlingBurstLimit: 10
+          ThrottlingRateLimit: 20
       DefinitionBody:
         Fn::Transform:
           Name: AWS::Include
