@@ -56,7 +56,7 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       EndpointConfiguration: EDGE
-      StageName: Dev
+      StageName: dev
       TracingEnabled: true
       MethodSettings:
         - HttpMethod: "*"
