@@ -19,9 +19,11 @@ Parameters:
     Description: User lambda Role ARN
   UserReceiverRoleARN:
     Type: String
-  DebugSampleRate: # debug_sample_rate = 0.05
+  DebugSampleRate:
     Type: Number
-  CognitoUserPoolARN:
+    Description: Percentage of debug logging printed to CloudWatch on Production environment
+    Default: 0.05
+  CognitoUserPoolARN: # OpenAPI param
     Type: String
   CognitoUserPoolClientID:
     Type: String
@@ -29,7 +31,7 @@ Parameters:
     Type: String
   SNSTopicARN:
     Type: String
-  APITimeout:
+  APITimeout: # OpenAPI param
     Type: Number
     Description: Sets the timeout in millis for all API endpoints
     Default: 4000
@@ -42,6 +44,9 @@ Globals:
     Timeout: 4
     ReservedConcurrentExecutions: 10
     MemorySize: 256
+    AutoPublishAlias: live
+    DeploymentPreference:
+      Type: AllAtOnce
     Tags:
       Environment:
         Ref: Environment
