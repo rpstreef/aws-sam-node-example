@@ -15,6 +15,10 @@ const lambdaHandler = middy(async (event, context) => {
   const params = standards.getParams(event)
   const operation = standards.getOperationName(event)
 
+  console.info('Params: ' + JSON.stringify(params))
+  console.info('Operation: ' + JSON.stringify(operation))
+  console.info('Event: ' + JSON.stringify(event))
+
   switch (operation) {
     // Login OR Renew authentication token
     case 'identityAuthenticate': {
