@@ -1,7 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Example Node AWS SAM application Integrates with Terraform deployed infrastructure
-
 Parameters:
   AppName:
     Type: String
@@ -14,28 +13,46 @@ Parameters:
   IdentityRoleARN:
     Type: String
     Description: Identity lambda Role ARN
+  IdentityFunctionName:
+    Type: String
+    Description: Identity Function name
+    Default: identity
+  IdentityDeploymentAlarmARN:
+    Type: String
+    Description: CloudWatch alarm for Canary deployment
   UserRoleARN:
     Type: String
     Description: User lambda Role ARN
+  UserFunctionName:
+    Type: String
+    Description: Identity Function name
+    Default: user
+  UserDeploymentAlarmARN:
+    Type: String
+    Description: CloudWatch alarm for Canary deployment
   UserReceiverRoleARN:
     Type: String
+  UserReceiverFunctionName:
+    Type: String
+    Description: Identity Function name
+    Default: user-receiver
+  UserReceiverDeploymentAlarmARN:
+    Type: String
+    Description: CloudWatch alarm for Canary deployment
   DebugSampleRate:
     Type: Number
     Description: Percentage of debug logging printed to CloudWatch on Production environment
     Default: 0.05
-  CognitoUserPoolARN: # OpenAPI param
-    Type: String
   CognitoUserPoolClientID:
     Type: String
   CognitoUserPoolID:
     Type: String
-  SNSTopicARN:
+  CognitoUserPoolARN:
     Type: String
-  APITimeout: # OpenAPI param
+  APITimeout:
     Type: Number
     Description: Sets the timeout in millis for all API endpoints
     Default: 4000
-
 Globals:
   Api:
     OpenApiVersion: 3.0.1
@@ -45,17 +62,14 @@ Globals:
     ReservedConcurrentExecutions: 10
     MemorySize: 256
     AutoPublishAlias: live
-    DeploymentPreference:
-      Type: AllAtOnce
+    Tracing: Active
+    Layers:
+    - Ref: LambdaLayer
     Tags:
       Environment:
         Ref: Environment
       Name:
         Ref: AppName
-    Tracing: Active
-    Layers:
-    - Ref: LambdaLayer
-
 Resources:
   Api:
     Type: AWS::Serverless::Api
@@ -64,13 +78,13 @@ Resources:
       StageName: dev
       TracingEnabled: true
       MethodSettings:
-        - HttpMethod: "*"
-          ResourcePath: "/*"
-          DataTraceEnabled: True
-          LoggingLevel: ERROR
-          MetricsEnabled: True
-          ThrottlingBurstLimit: 10
-          ThrottlingRateLimit: 20
+      - HttpMethod: '*'
+        ResourcePath: /*
+        DataTraceEnabled: true
+        LoggingLevel: ERROR
+        MetricsEnabled: true
+        ThrottlingBurstLimit: 10
+        ThrottlingRateLimit: 20
       DefinitionBody:
         Fn::Transform:
           Name: AWS::Include
@@ -81,14 +95,20 @@ Resources:
           Ref: Environment
         Name:
           Ref: AppName
-
   IdentityFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName:
+        Fn::Sub: ${Environment}-${AppName}-${IdentityFunctionName}
+      Description: Provides all Cognito functions through 4 API Rest calls
       CodeUri: src/
       Handler: identity/app.lambdaHandler
       Role:
         Ref: IdentityRoleARN
+      DeploymentPreference:
+        Type: Canary10Percent5Minutes
+        Alarms:
+        - Ref: IdentityDeploymentAlarmARN
       Environment:
         Variables:
           COGNITO_USER_POOL_CLIENT_ID:
@@ -97,81 +117,42 @@ Resources:
             Ref: CognitoUserPoolID
           DEBUG_SAMPLE_RATE:
             Ref: DebugSampleRate
-      Events:
-        identityAuthenticate:
-          Type: Api
-          Properties:
-            Path: /identity/authenticate
-            Method: post
-            RestApiId:
-              Ref: Api
-        identityRegister:
-          Type: Api
-          Properties:
-            Path: /identity/register
-            Method: post
-            RestApiId:
-              Ref: Api
-        identityReset:
-          Type: Api
-          Properties:
-            Path: /identity/reset
-            Method: post
-            RestApiId:
-              Ref: Api
-        identityVerify:
-          Type: Api
-          Properties:
-            Path: /identity/verify
-            Method: post
-            RestApiId:
-              Ref: Api
-
   UserFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName:
+        Fn::Sub: ${Environment}-${AppName}-${UserFunctionName}
+      Description: Provides all User functions
       CodeUri: src/
       Handler: user/app.lambdaHandler
       Role:
         Ref: UserRoleARN
+      DeploymentPreference:
+        Type: Canary10Percent5Minutes
+        Alarms:
+        - Ref: UserDeploymentAlarmARN
       Environment:
         Variables:
           DEBUG_SAMPLE_RATE:
             Ref: DebugSampleRate
-      Events:
-        getUser:
-          Type: Api
-          Properties:
-            Path: /user
-            Method: get
-            RestApiId:
-              Ref: Api
-        postUser:
-          Type: Api
-          Properties:
-            Path: /user
-            Method: post
-            RestApiId:
-              Ref: Api
-
   UserReceiverFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName:
+        Fn::Sub: ${Environment}-${AppName}-${UserReceiverFunctionName}
+      Description: Integrated with SNS
       CodeUri: src/
       Handler: user_receiver/app.lambdaHandler
       Role:
         Ref: UserReceiverRoleARN
+      DeploymentPreference:
+        Type: Canary10Percent5Minutes
+        Alarms:
+        - Ref: UserReceiverDeploymentAlarmARN
       Environment:
         Variables:
           DEBUG_SAMPLE_RATE:
             Ref: DebugSampleRate
-      Events:
-        SNS:
-          Type: SNS
-          Properties:
-            Topic: 
-              Ref: SNSTopicARN
-
   LambdaLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
@@ -183,9 +164,85 @@ Resources:
       CompatibleRuntimes:
       - nodejs12.x
       RetentionPolicy: Retain
-
+  
+  IdentityCanaryErrorsAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: Identity Lambda function canary errors
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 2
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Period: 60
+      Statistic: Sum
+      Threshold: 0
+      Dimensions:
+        - Name: Resource
+          Value:
+            Fn::Sub: ${IdentityFunction}:live
+        - Name: FunctionName
+          Value: 
+            Ref: IdentityFunction
+        - Name: ExecutedVersion
+          Value:
+            Fn::GetAtt:
+            - IdentityFunction
+            - Version
+            - Version
+  UserCanaryErrorsAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: User Lambda function canary errors
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 2
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Period: 60
+      Statistic: Sum
+      Threshold: 0
+      Dimensions:
+        - Name: Resource
+          Value:
+            Fn::Sub: ${UserFunction}:live
+        - Name: FunctionName
+          Value: 
+            Ref: UserFunction
+        - Name: ExecutedVersion
+          Value:
+            Fn::GetAtt:
+            - UserFunction
+            - Version
+            - Version
+  UserReceiverCanaryErrorsAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: UserReceiver Lambda function canary errors
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 2
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Period: 60
+      Statistic: Sum
+      Threshold: 0
+      Dimensions:
+        - Name: Resource
+          Value:
+            Fn::Sub: ${UserReceiverFunction}:live
+        - Name: FunctionName
+          Value: 
+            Ref: UserReceiverFunction
+        - Name: ExecutedVersion
+          Value:
+            Fn::GetAtt:
+            - UserReceiverFunction
+            - Version
+            - Version
 Outputs:
-  Api:
+  ApiID:
+    Description: API Gateway Resource ID
+    Value:
+      Ref: Api
+  ApiURL:
     Description: API Gateway endpoint URL for Prod stage for Hello World function
     Value:
       Fn::Sub: https://${Api}.execute-api.${AWS::Region}.amazonaws.com/dev/
