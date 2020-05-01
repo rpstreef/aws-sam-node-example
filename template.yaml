@@ -13,32 +13,11 @@ Parameters:
   IdentityRoleARN:
     Type: String
     Description: Identity lambda Role ARN
-  IdentityFunctionName:
-    Type: String
-    Description: Identity Function name
-    Default: identity
-  IdentityDeploymentAlarmARN:
-    Type: String
-    Description: CloudWatch alarm for Canary deployment
   UserRoleARN:
     Type: String
     Description: User lambda Role ARN
-  UserFunctionName:
-    Type: String
-    Description: Identity Function name
-    Default: user
-  UserDeploymentAlarmARN:
-    Type: String
-    Description: CloudWatch alarm for Canary deployment
   UserReceiverRoleARN:
     Type: String
-  UserReceiverFunctionName:
-    Type: String
-    Description: Identity Function name
-    Default: user-receiver
-  UserReceiverDeploymentAlarmARN:
-    Type: String
-    Description: CloudWatch alarm for Canary deployment
   DebugSampleRate:
     Type: Number
     Description: Percentage of debug logging printed to CloudWatch on Production environment
@@ -99,7 +78,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName:
-        Fn::Sub: ${Environment}-${AppName}-${IdentityFunctionName}
+        Fn::Sub: ${Environment}-${AppName}-identity
       Description: Provides all Cognito functions through 4 API Rest calls
       CodeUri: src/
       Handler: identity/app.lambdaHandler
@@ -108,7 +87,7 @@ Resources:
       DeploymentPreference:
         Type: Canary10Percent5Minutes
         Alarms:
-        - Ref: IdentityDeploymentAlarmARN
+        - Ref: IdentityCanaryErrorsAlarm
       Environment:
         Variables:
           COGNITO_USER_POOL_CLIENT_ID:
@@ -121,7 +100,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName:
-        Fn::Sub: ${Environment}-${AppName}-${UserFunctionName}
+        Fn::Sub: ${Environment}-${AppName}-user
       Description: Provides all User functions
       CodeUri: src/
       Handler: user/app.lambdaHandler
@@ -130,7 +109,7 @@ Resources:
       DeploymentPreference:
         Type: Canary10Percent5Minutes
         Alarms:
-        - Ref: UserDeploymentAlarmARN
+        - Ref: UserCanaryErrorsAlarm
       Environment:
         Variables:
           DEBUG_SAMPLE_RATE:
@@ -139,7 +118,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName:
-        Fn::Sub: ${Environment}-${AppName}-${UserReceiverFunctionName}
+        Fn::Sub: ${Environment}-${AppName}-user-receiver
       Description: Integrated with SNS
       CodeUri: src/
       Handler: user_receiver/app.lambdaHandler
@@ -148,7 +127,7 @@ Resources:
       DeploymentPreference:
         Type: Canary10Percent5Minutes
         Alarms:
-        - Ref: UserReceiverDeploymentAlarmARN
+        - Ref: UserReceiverCanaryErrorsAlarm
       Environment:
         Variables:
           DEBUG_SAMPLE_RATE:
