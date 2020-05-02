@@ -161,7 +161,8 @@ Resources:
   IdentityCanaryErrorsAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: ${Environment}-${AppName}-identity-canary-alarm
+      AlarmName: 
+        Fn::Sub: ${Environment}-${AppName}-identity-canary-alarm
       AlarmDescription: Identity Lambda function canary errors
       ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 2
@@ -186,7 +187,8 @@ Resources:
   UserCanaryErrorsAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: ${Environment}-${AppName}-user-canary-alarm
+      AlarmName: 
+        Fn::Sub: ${Environment}-${AppName}-user-canary-alarm
       AlarmDescription: User Lambda function canary errors
       ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 2
@@ -211,7 +213,8 @@ Resources:
   UserReceiverCanaryErrorsAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
-      AlarmName: ${Environment}-${AppName}-user-receiver-canary-alarm
+      AlarmName: 
+        Fn::Sub: ${Environment}-${AppName}-user-receiver-canary-alarm
       AlarmDescription: UserReceiver Lambda function canary errors
       ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 2
@@ -233,6 +236,7 @@ Resources:
             - UserReceiverFunction
             - Version
             - Version
+
 Outputs:
   ApiID:
     Description: API Gateway Resource ID
