@@ -53,6 +53,8 @@ Globals:
       Name:
         Ref: AppName
 Resources:
+
+  # API Gateway
   Api:
     Type: AWS::Serverless::Api
     Properties:
@@ -77,6 +79,8 @@ Resources:
           Ref: Environment
         Name:
           Ref: AppName
+
+  # Lambda Functions
   IdentityFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -99,6 +103,7 @@ Resources:
             Ref: CognitoUserPoolID
           DEBUG_SAMPLE_RATE:
             Ref: DebugSampleRate
+
   UserFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -119,6 +124,7 @@ Resources:
             Ref: DebugSampleRate
           SNS_TOPIC:
             Ref: SNSTopicARN
+
   UserReceiverFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -137,6 +143,8 @@ Resources:
         Variables:
           DEBUG_SAMPLE_RATE:
             Ref: DebugSampleRate
+
+  # Lambda Layer
   LambdaLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
@@ -149,9 +157,11 @@ Resources:
       - nodejs12.x
       RetentionPolicy: Retain
   
+  # CloudWatch Alarms
   IdentityCanaryErrorsAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
+      AlarmName: ${Environment}-${AppName}-identity-canary-alarm
       AlarmDescription: Identity Lambda function canary errors
       ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 2
@@ -176,6 +186,7 @@ Resources:
   UserCanaryErrorsAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
+      AlarmName: ${Environment}-${AppName}-user-canary-alarm
       AlarmDescription: User Lambda function canary errors
       ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 2
@@ -200,6 +211,7 @@ Resources:
   UserReceiverCanaryErrorsAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
+      AlarmName: ${Environment}-${AppName}-user-receiver-canary-alarm
       AlarmDescription: UserReceiver Lambda function canary errors
       ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 2

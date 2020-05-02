@@ -2,8 +2,8 @@
 const middy = require('middy')
 const { httpErrorHandler, httpSecurityHeaders } = require('middy/middlewares')
 
-const { ErrorResponse } = require('../../lib/response')
-const standards = require('../../lib/standards')
+const { ErrorResponse } = require('../lib/response')
+const standards = require('../lib/standards')
 
 const getUser = require('./operations/getUser')
 const postUser = require('./operations/postUser')
