@@ -1,6 +1,6 @@
 'use strict'
 
-const { SuccessResponse, ErrorResponse } = require('../../../lib/response')
+const { SuccessResponse, ErrorResponse } = require('../../lib/response')
 
 async function handler (params, operation) {
   if (params.userID) {

@@ -1,9 +1,9 @@
 'use strict'
 
-const { SuccessResponse, ErrorResponse } = require('../../../lib/response')
-const Logger = require('../../../lib/logger')
-const CorrelationId = require('../../../lib/correlationId')
-const sns = require('../../../lib/sns')
+const { SuccessResponse, ErrorResponse } = require('../../lib/response')
+const Logger = require('../../lib/logger')
+const CorrelationId = require('../../lib/correlationId')
+const sns = require('../../lib/sns')
 
 async function handler (event, context) {
   const logger = new Logger(event, context)
