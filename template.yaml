@@ -26,6 +26,10 @@ Parameters:
     Type: Number
     Description: Percentage of debug logging printed to CloudWatch on Production environment
     Default: 0.05
+  LambdaCanaryType:
+    Type: String
+    Description: Sets the Canary deployment configuration, e.g. LambdaAllAtOnce, LambdaCanary10Percent5Minutes, LambdaLinear10PercentEvery1Minute, etc. See https://docs.aws.amazon.com/codedeploy/latest/userguide/deployment-configurations.html
+    Default: Canary10Percent5Minutes
   CognitoUserPoolClientID:
     Type: String
   CognitoUserPoolID:
@@ -97,7 +101,8 @@ Resources:
       Role:
         Ref: IdentityRoleARN
       DeploymentPreference:
-        Type: Canary10Percent5Minutes
+        Type: 
+          Ref: LambdaCanaryType
         Alarms:
         - Ref: IdentityCanaryErrorsAlarm
       Environment:
@@ -120,7 +125,8 @@ Resources:
       Role:
         Ref: UserRoleARN
       DeploymentPreference:
-        Type: Canary10Percent5Minutes
+        Type:
+          Ref: LambdaCanaryType
         Alarms:
         - Ref: UserCanaryErrorsAlarm
       Environment:
@@ -141,7 +147,8 @@ Resources:
       Role:
         Ref: UserReceiverRoleARN
       DeploymentPreference:
-        Type: Canary10Percent5Minutes
+        Type:
+          Ref: LambdaCanaryType
         Alarms:
         - Ref: UserReceiverCanaryErrorsAlarm
       Environment:
