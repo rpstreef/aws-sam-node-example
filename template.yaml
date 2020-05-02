@@ -18,6 +18,9 @@ Parameters:
     Description: User lambda Role ARN
   UserReceiverRoleARN:
     Type: String
+  SNSTopicARN:
+    Type: String
+    Description: SNS Topic ARN for UserFunction to publish messages on SNS
   DebugSampleRate:
     Type: Number
     Description: Percentage of debug logging printed to CloudWatch on Production environment
@@ -114,6 +117,8 @@ Resources:
         Variables:
           DEBUG_SAMPLE_RATE:
             Ref: DebugSampleRate
+          SNS_TOPIC:
+            Ref: SNSTopicARN
   UserReceiverFunction:
     Type: AWS::Serverless::Function
     Properties:

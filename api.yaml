@@ -253,7 +253,7 @@ paths:
       parameters:
        - $ref: '#/components/parameters/correlationIdHeader'
        - $ref: '#/components/parameters/debugHeader'
-      x-amazon-apigateway-request-validator: body
+      x-amazon-apigateway-request-validator: all
       requestBody:
         required: true
         content:
