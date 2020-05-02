@@ -1,6 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Example Node AWS SAM application Integrates with Terraform deployed infrastructure
+
 Parameters:
   AppName:
     Type: String
@@ -35,6 +36,7 @@ Parameters:
     Type: Number
     Description: Sets the timeout in millis for all API endpoints
     Default: 4000
+
 Globals:
   Api:
     OpenApiVersion: 3.0.1
@@ -52,12 +54,15 @@ Globals:
         Ref: Environment
       Name:
         Ref: AppName
+
 Resources:
 
   # API Gateway
   Api:
     Type: AWS::Serverless::Api
     Properties:
+      Name:
+        Fn::Sub: ${Environment}-${AppName}-api
       EndpointConfiguration: EDGE
       StageName: dev
       TracingEnabled: true
