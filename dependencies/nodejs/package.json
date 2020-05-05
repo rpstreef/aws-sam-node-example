@@ -10,10 +10,10 @@
     "license": "Apache-2.0",
     "dependencies": {
         "middy": "^0.25.0",
-        "winston": "^3.2.1"
+        "winston": "^3.2.1",
+        "aws-xray-sdk": "~2.5.0"
     },
     "devDependencies": {
-        "aws-sdk": "^2.435.0",
-        "aws-xray-sdk": "~2.5.0"
+        "aws-sdk": "^2.435.0"
     }
 }
