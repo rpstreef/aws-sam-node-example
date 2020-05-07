@@ -7,7 +7,7 @@
     "validate": "node .\\cmd\\openapi-validate.js api.yaml",
     "convert": "node .\\cmd\\openapi-to-jsonschema.js api.yaml src/schema/api.json",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "identityFunction": "sam local invoke IdentityFunction -e ./events/event.json -d 5858",
+    "identityFunction": "sam local invoke IdentityFunction -e ./events/event.json -d 5858 -n env.json",
     "start-api": "sam local start-api -d 5858 -n env.json"
   },
   "repository": {
