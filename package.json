@@ -8,7 +8,7 @@
     "convert": "node .\\cmd\\openapi-to-jsonschema.js api.yaml src/schema/api.json",
     "test": "echo \"Error: no test specified\" && exit 1",
     "identityFunction": "sam local invoke IdentityFunction -e ./events/event.json -d 5858",
-    "deploy": "sam build && sam deploy --profile multithreadlabs-dev"
+    "start-api": "sam local start-api -d 5858"
   },
   "repository": {
     "type": "git",
