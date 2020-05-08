@@ -12,16 +12,21 @@ Parameters:
     Description: Name of application (no spaces). Value must be globally unique
     Default: dev
   IdentityRoleARN:
-    Type: String
+    Type: AWS::SSM::Parameter::Value<String>
     Description: Identity lambda Role ARN
+    Default: /dev/example/identity_role_arn
   UserRoleARN:
-    Type: String
+    Type: AWS::SSM::Parameter::Value<String>
     Description: User lambda Role ARN
+    Default: /dev/example/user_role_arn
   UserReceiverRoleARN:
-    Type: String
+    Type: AWS::SSM::Parameter::Value<String>
+    Description: User receiver lambda Role ARN
+    Default: /dev/example/user_role_arn
   SNSTopicARN:
-    Type: String
+    Type: AWS::SSM::Parameter::Value<String>
     Description: SNS Topic ARN for UserFunction to publish messages on SNS
+    Default: /dev/example/sns_topic_arn
   DebugSampleRate:
     Type: Number
     Description: Percentage of debug logging printed to CloudWatch on Production environment
@@ -31,11 +36,14 @@ Parameters:
     Description: Sets the Canary deployment configuration, e.g. LambdaAllAtOnce, LambdaCanary10Percent5Minutes, LambdaLinear10PercentEvery1Minute, etc. See https://docs.aws.amazon.com/codedeploy/latest/userguide/deployment-configurations.html
     Default: Canary10Percent5Minutes
   CognitoUserPoolClientID:
-    Type: String
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /dev/example/cognito_user_pool_client_id
   CognitoUserPoolID:
-    Type: String
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /dev/example/cognito_identity_pool_id
   CognitoUserPoolARN:
-    Type: String
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /dev/example/cognito_user_pool_arn
   APITimeout:
     Type: Number
     Description: Sets the timeout in millis for all API endpoints

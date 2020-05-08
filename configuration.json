@@ -1,16 +1,4 @@
 {
-  "Parameters": {
-    "AppName": "example",
-    "Environment": "dev",
-    "IdentityRoleARN": "arn:aws:iam::921906086636:role/dev-example-identity-role",
-    "UserRoleARN": "arn:aws:iam::921906086636:role/dev-example-user-role",
-    "UserReceiverRoleARN": "arn:aws:iam::921906086636:role/dev-example-user-role",
-    "CognitoUserPoolClientID": "3iss9fehitlqvhn4k3h3bnrrhg",
-    "CognitoUserPoolID": "us-east-1:09d5b578-9f41-42ef-9f57-4ea8fc5c75a7",
-    "CognitoUserPoolARN": "arn:aws:cognito-idp:us-east-1:921906086636:userpool/us-east-1_psrGngUkB",
-    "SNSTopicARN": "arn:aws:sns:us-east-1:921906086636:dev-example-user-topic-lambda",
-    "LambdaCanaryType": "AllAtOnce"
-  },
   "Tags": {
     "Environment": "dev",
     "Name": "example"
